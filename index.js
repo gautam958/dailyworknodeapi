@@ -58,6 +58,15 @@ app.get("/users", function (request, response) {
             response.send(users); // sends users back to the page
         });
 });
+app.post("/new", urlencodedParser, function (request, response) {
+    db.collection("users").insert([{ userid: request.body.user }], function (
+        err,
+        r
+    ) {
+        console.log("Added a user");
+        response.redirect("/");
+    });
+});
 
 // app.listen(port, hostname, () => {
 //     console.log(`Server running at http://${hostname}:${port}/`);
