@@ -40,9 +40,7 @@ client.connect(err => {
     // });
 });
 
-const hostname = '127.0.0.1';
-//const port = 8080;
-const port = 5100;
+
 
 // const server = http.createServer((req, res) => {
 //     res.statusCode = 200;
@@ -53,11 +51,11 @@ var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const pathToData = path.resolve(__dirname, "Public");
-const virtualPath = path.resolve(__dirname); 
-const spath= path.resolve(app.get('appPath')+"/") ;
+const virtualPath = path.resolve(__dirname);  
 console.warn('public path ',pathToData);
 console.warn('virtual path ',virtualPath);
-console.warn('s path ',spath);
+
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -65,7 +63,7 @@ app.use(function(req, res, next) {
   });
 
 // Send user data - used by client.js
-app.get(virtualPath+"/users", function (request, response) {
+app.get("/users", function (request, response) {
     db.collection("Users")
         .find()
         .toArray(function (err, users) {
@@ -73,13 +71,13 @@ app.get(virtualPath+"/users", function (request, response) {
             response.send(users); // sends users back to the page
         });
 });
-app.post(virtualPath +"/new", urlencodedParser, function (request, response) {
+app.post("/new", urlencodedParser, function (request, response) {
     db.collection("users").insert([{ userid: request.body.user }], function (
         err,
         r
     ) {
         console.log("Added a user");
-        response.redirect(virtualPath+"/");
+        response.redirect("/");
     });
 });
 
@@ -87,11 +85,14 @@ app.post(virtualPath +"/new", urlencodedParser, function (request, response) {
 //     console.log(`Server running at http://${hostname}:${port}/`);
 // });
 
+const hostname = '127.0.0.1';
+//const port = 8080;
+const port = process.env.port || 5105;
 
-app.route('/*')
-.get((req, res) => {
-  res.sendFile(path.resolve(app.get('appPath') + '/index.html'));
-});
+// app.route('/*')
+// .get((req, res) => {
+//   res.sendFile(path.resolve(app.get('appPath') + '/index.html'));
+// });
  
 // Listen on port 8080
 var listener = app.listen(port, function () {
