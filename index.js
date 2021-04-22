@@ -87,7 +87,7 @@ app.post("/new", urlencodedParser, function (request, response) {
 
 const hostname = '127.0.0.1';
 //const port = 8080;
-const port = process.env.port || 5106;
+const port = process.env.port || 3000;
 
 // app.route('/*')
 // .get((req, res) => {
