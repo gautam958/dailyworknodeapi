@@ -1,5 +1,6 @@
 const http = require('http');
 var express = require("express");
+const path = require('path');
 const MongoClient = require("mongodb").MongoClient;
 const MONGODB_URL = 'mongodb+srv://gautam:9955771618@clustergautam958.i5ruh.azure.mongodb.net';
 //const MONGODB_URL = 'mongodb://localhost:27017';
@@ -41,7 +42,7 @@ client.connect(err => {
 
 const hostname = '127.0.0.1';
 //const port = 8080;
-const port = 5101;
+const port = 5100;
 
 // const server = http.createServer((req, res) => {
 //     res.statusCode = 200;
@@ -50,8 +51,21 @@ const port = 5101;
 // });
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
+
+const pathToData = path.resolve(__dirname, "Public");
+const virtualPath = path.resolve(__dirname); 
+const spath= path.resolve(app.get('appPath')+"/") ;
+console.warn('public path ',pathToData);
+console.warn('virtual path ',virtualPath);
+console.warn('s path ',spath);
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
 // Send user data - used by client.js
-app.get("dailyworknodeapi/users", function (request, response) {
+app.get(virtualPath+"/users", function (request, response) {
     db.collection("Users")
         .find()
         .toArray(function (err, users) {
@@ -59,13 +73,13 @@ app.get("dailyworknodeapi/users", function (request, response) {
             response.send(users); // sends users back to the page
         });
 });
-app.post("dailyworknodeapi/new", urlencodedParser, function (request, response) {
+app.post(virtualPath +"/new", urlencodedParser, function (request, response) {
     db.collection("users").insert([{ userid: request.body.user }], function (
         err,
         r
     ) {
         console.log("Added a user");
-        response.redirect("/");
+        response.redirect(virtualPath+"/");
     });
 });
 
@@ -73,11 +87,13 @@ app.post("dailyworknodeapi/new", urlencodedParser, function (request, response) 
 //     console.log(`Server running at http://${hostname}:${port}/`);
 // });
 
-app.get("/", function(request, response) {
-    response.sendFile("./index.html");
-  });
+
+app.route('/*')
+.get((req, res) => {
+  res.sendFile(path.resolve(app.get('appPath') + '/index.html'));
+});
  
 // Listen on port 8080
 var listener = app.listen(port, function () {
     console.log("Listening on port " + listener.address().port);
-});
+}); 

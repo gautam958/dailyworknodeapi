@@ -5,7 +5,8 @@
   "homepage": "https://gautam958.github.io/dailyworknodeapi/",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js localhost 8080",
+    "start": "node index.js",
+    "dev": "nodemon ./index.js localhost 8080",
     "build": "",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d ./"
