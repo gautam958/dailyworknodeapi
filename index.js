@@ -1,8 +1,8 @@
 const http = require('http');
 var express = require("express");
 const MongoClient = require("mongodb").MongoClient;
-//const MONGODB_URL = 'mongodb+srv://gautam:9955771618@clustergautam958.i5ruh.azure.mongodb.net';
-const MONGODB_URL = 'mongodb://localhost:27017';
+const MONGODB_URL = 'mongodb+srv://gautam:9955771618@clustergautam958.i5ruh.azure.mongodb.net';
+//const MONGODB_URL = 'mongodb://localhost:27017';
 DB_NAME = 'DailyWork';
 var db;
 var app = express();
@@ -48,9 +48,10 @@ const port = 5101;
 //     res.setHeader('Content-Type', 'text/plain');
 //     res.end('Hello World');
 // });
-
+var jsonParser = bodyParser.json()
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 // Send user data - used by client.js
-app.get("/users", function (request, response) {
+app.get("dailyworknodeapi/users", function (request, response) {
     db.collection("Users")
         .find()
         .toArray(function (err, users) {
@@ -58,7 +59,7 @@ app.get("/users", function (request, response) {
             response.send(users); // sends users back to the page
         });
 });
-app.post("/new", urlencodedParser, function (request, response) {
+app.post("dailyworknodeapi/new", urlencodedParser, function (request, response) {
     db.collection("users").insert([{ userid: request.body.user }], function (
         err,
         r
@@ -72,6 +73,10 @@ app.post("/new", urlencodedParser, function (request, response) {
 //     console.log(`Server running at http://${hostname}:${port}/`);
 // });
 
+app.get("/", function(request, response) {
+    response.sendFile("./index.html");
+  });
+ 
 // Listen on port 8080
 var listener = app.listen(port, function () {
     console.log("Listening on port " + listener.address().port);
