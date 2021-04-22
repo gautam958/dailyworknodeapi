@@ -87,7 +87,7 @@ app.post("/new", urlencodedParser, function (request, response) {
 
 const hostname = '127.0.0.1';
 //const port = 8080;
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 
 // app.route('/*')
 // .get((req, res) => {
@@ -97,6 +97,6 @@ const port = process.env.port || 3000;
    res.send("<h1>Hellow from nodejs api used with mongodb</h1>");
  });
 // Listen on port 8080
-var listener = app.listen(port, function () {
-    console.log("Listening on port " + listener.address().port);
+var listener = app.listen(port,  () =>{
+    console.log(`Node Api running on port http://localhost:${port}`);
 }); 
