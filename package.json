@@ -6,8 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./index.js localhost 8080",
+    "build":"",
     "predeploy": "npm run build",
-    "deploy": "gh-pages ."
+    "deploy": "gh-pages -d ./"
   },
   "author": "",
   "license": "ISC",
