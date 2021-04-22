@@ -87,13 +87,15 @@ app.post("/new", urlencodedParser, function (request, response) {
 
 const hostname = '127.0.0.1';
 //const port = 8080;
-const port = process.env.port || 5105;
+const port = process.env.port || 5106;
 
 // app.route('/*')
 // .get((req, res) => {
 //   res.sendFile(path.resolve(app.get('appPath') + '/index.html'));
 // });
- 
+ app.get('/',(req,res)=>{
+   res.send("<h1>Hellow from nodejs api used with mongodb</h1>");
+ });
 // Listen on port 8080
 var listener = app.listen(port, function () {
     console.log("Listening on port " + listener.address().port);
