@@ -1,102 +1,75 @@
 const http = require('http');
 var express = require("express");
 const path = require('path');
-const MongoClient = require("mongodb").MongoClient;
-const MONGODB_URL = 'mongodb+srv://gautam:9955771618@clustergautam958.i5ruh.azure.mongodb.net';
-//const MONGODB_URL = 'mongodb://localhost:27017';
-DB_NAME = 'DailyWork';
-var db;
+const bodyParser = require('body-parser');
+const router = express.Router();
+// mongdb is not using now
+//const MongoClient = require("mongodb").MongoClient;
+const mongoose = require('mongoose');
+
+const config = require('./config/db');
+
+// Use Node's default promise instead of Mongoose's promise library
+mongoose.Promise = global.Promise;
+
+mongoose.connect(config.db, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+});
+
+let db = mongoose.connection;
+
+db.on('open', () => {
+    console.warn('Connected to the database  ', db.name);
+});
+
+db.on('error', (err) => {
+    console.log(`Database error: ${err + db}`);
+});
 var app = express();
-var bodyParser = require("body-parser");
-const client = new MongoClient(MONGODB_URL, {
-    useNewUrlParser: true
-});
-app.use(express.static("public"));
 
-client.connect(err => {
-    var dbUsers = [];
-    console.log("Connected successfully to database");
+app.enable('trust proxy');
 
-    console.warn('connection string ', MONGODB_URL);
-    console.warn('DB Name ', DB_NAME);
+app.use(express.static('public'));
 
-    db = client.db(DB_NAME);
+// Set body parser middleware
+app.use(bodyParser.json());
 
-
-
-    // // Removes any existing entries in the users collection
-    // db.collection("Users").deleteMany({ name: { $exists: true } }, function (
-    //     err,
-    //     r
-    // ) {
-    //     for (var i = 0; i < users.length; i++) {
-    //         // loop through all default users
-    //         dbUsers.push({ name: users[i] });
-    //     }
-    //     // add them to users collection
-    //     db.collection("users").insertMany(dbUsers, function (err, r) {
-    //         console.log("Inserted initial users");
-    //     });
-    // });
-});
-
-
-
-// const server = http.createServer((req, res) => {
-//     res.statusCode = 200;
-//     res.setHeader('Content-Type', 'text/plain');
-//     res.end('Hello World');
+// Enable cross-origin access through the CORS middleware
+// NOTICE: For React development server only!
+if (process.env.CORS) {
+    app.use(cors());
+}
+// app.use(function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     next();
 // });
-var jsonParser = bodyParser.json()
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+
+// Initialize routes middleware
+app.use('/api/users', require('./routes/users'));
+
+app.use((err, req, res, next) => {
+    if (res.headersSent) return next(err);
+    res.status(400).json({ err: err });
+});
 
 const pathToData = path.resolve(__dirname, "Public");
-const virtualPath = path.resolve(__dirname);  
-console.warn('public path ',pathToData);
-console.warn('virtual path ',virtualPath);
+const virtualPath = path.resolve(__dirname);
+console.warn('public path ', pathToData);
+console.warn('virtual path ', virtualPath);
 
-
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
-
-// Send user data - used by client.js
-app.get("/users", function (request, response) {
-    db.collection("Users")
-        .find()
-        .toArray(function (err, users) {
-            // finds all entries in the users collection
-            response.send(users); // sends users back to the page
-        });
-});
-app.post("/new", urlencodedParser, function (request, response) {
-    db.collection("users").insert([{ userid: request.body.user }], function (
-        err,
-        r
-    ) {
-        console.log("Added a user");
-        response.redirect("/");
-    });
-});
-
-// app.listen(port, hostname, () => {
-//     console.log(`Server running at http://${hostname}:${port}/`);
-// });
-
-const hostname = '127.0.0.1';
-//const port = 8080;
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || config.PortNumber;
 
 // app.route('/*')
 // .get((req, res) => {
 //   res.sendFile(path.resolve(app.get('appPath') + '/index.html'));
 // });
- app.get('/',(req,res)=>{
-   res.send("<h1>Hellow from nodejs api used with mongodb</h1>");
- });
+app.get('/', (req, res) => {
+    res.send("<h1>Hellow from nodejs api used with mongodb</h1>");
+});
 // Listen on port 8080
-var listener = app.listen(port,  () =>{
-    console.log(`Node Api running on port http://localhost:${port}`);
-}); 
+var listener = app.listen(port, () => {
+    console.log(`Node Api running on port   http://localhost:${port} `);
+});
