@@ -81,4 +81,4 @@ const UserSchema = new mongoose.Schema({
 // Use the unique validator plugin
 UserSchema.plugin(unique, { message: 'That {PATH} is already taken.' });
 
-const User = module.exports = mongoose.model('Users', UserSchema);
+const User = module.exports = mongoose.model('users', UserSchema);

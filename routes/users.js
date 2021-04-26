@@ -61,6 +61,7 @@ router.post('/', postLimiter, (req, res) => {
 
     });
     //console.warn('new User', newUser);
+
     newUser.save()
         .then((result) => {
             res.json({
@@ -115,7 +116,6 @@ router.put('/:id', (req, res) => {
         FullName: sanitizeName(req.body.FullName),
         Email: sanitizeName(req.body.Email),
         ContactNo: sanitizeName(req.body.ContactNo),
-        Country: sanitizeName(req.body.Country),
     };
 
     User.findOneAndUpdate({ _id: req.params.id }, updatedUser, { runValidators: true, context: 'query' })
@@ -127,11 +127,11 @@ router.put('/:id', (req, res) => {
                         msg: `Successfully updated!`,
                         result: {
                             _id: newResult._id,
-                            Userid: result.Userid,
-                            FullName: result.FullName,
-                            Email: result.Email,
-                            ContactNo: result.ContactNo,
-                            Country: result.Country
+                            Userid: newResult.Userid,
+                            FullName: newResult.FullName,
+                            Email: newResult.Email,
+                            ContactNo: newResult.ContactNo,
+                            Country: newResult.Country
                         }
                     });
                 })
