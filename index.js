@@ -67,7 +67,7 @@ const port = process.env.PORT || config.PortNumber;
 //   res.sendFile(path.resolve(app.get('appPath') + '/index.html'));
 // });
 app.get('/', (req, res) => {
-    res.send("<h1>Hellow from nodejs api used with mongodb</h1>");
+    res.send("<h1>Hello from nodejs api used with mongodb</h1>");
 });
 // Listen on port 8080
 var listener = app.listen(port, () => {
